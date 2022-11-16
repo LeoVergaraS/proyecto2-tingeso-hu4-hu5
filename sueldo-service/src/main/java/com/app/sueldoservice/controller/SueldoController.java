@@ -7,11 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.sueldoservice.entity.Sueldo;
+import com.app.sueldoservice.service.RRHHservice;
 import com.app.sueldoservice.service.SueldoService;
 
 @RestController
@@ -20,6 +20,9 @@ public class SueldoController {
     
     @Autowired
     SueldoService sueldoService;
+
+    @Autowired
+    RRHHservice rrhhService;
 
     @GetMapping
     public ResponseEntity<List<Sueldo>> getAll(){
@@ -39,16 +42,13 @@ public class SueldoController {
         return ResponseEntity.ok(sueldo);
     }
 
-    @PostMapping
-    public ResponseEntity<Sueldo> create(@RequestBody Sueldo sueldo){
-        Sueldo sueldoCreado = sueldoService.crearSueldo(sueldo);
-        return ResponseEntity.ok(sueldoCreado);
-    }
-
-    @PostMapping("/delete")
-    public ResponseEntity<Void> delete(){
-        sueldoService.eliminarSueldo();
-        return ResponseEntity.ok(null);
+    @PostMapping("/calcular/{mes}/{anio}")
+    public ResponseEntity<String> calcularSueldo(@PathVariable("mes") int mes, @PathVariable("anio") int anio){
+        Boolean creado = rrhhService.calcularPlanilla(mes, anio);
+        if(creado){
+            return ResponseEntity.ok("Se crearon los sueldos");
+        }
+        return ResponseEntity.ok("No hay empleados para calcular su sueldo");
     }
 
 }
