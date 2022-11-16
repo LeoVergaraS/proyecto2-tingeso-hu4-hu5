@@ -34,7 +34,7 @@ public class SueldoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sueldo> getById(@PathVariable Long id){
+    public ResponseEntity<Sueldo> getById(@PathVariable("id") Long id){
         Sueldo sueldo = sueldoService.obtenerSueldo(id);
         if(sueldo == null){
             return ResponseEntity.notFound().build();

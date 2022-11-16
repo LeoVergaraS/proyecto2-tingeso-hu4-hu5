@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.app.sueldoservice.entity.Sueldo;
-import com.app.sueldoservice.models.Empleado;
+import com.app.sueldoservice.entity.Empleado;
 
 @Service
 public class RRHHservice {
 
     @Autowired 
     SueldoService sueldoService;
+
+    @Autowired
+    EmpleadoService empleadoService;
 
     RestTemplate restTemplate = new RestTemplate();
 
@@ -67,16 +70,27 @@ public class RRHHservice {
         double monto70 = tiempoAtraso.get(3) * 0.15 * sueldoMensualFijo;
         return monto10 + monto25 + monto45 + monto70;
     }
+
+    private List<Integer> juntarAtrasos(Integer[] atrasos, Integer inasistencia){
+        List<Integer> atrasosInasistencia = new ArrayList<>();
+        for(int i = 0; i < atrasos.length; i++){
+            atrasosInasistencia.add(atrasos[i]);
+        }
+        atrasosInasistencia.add(inasistencia);
+        return atrasosInasistencia;
+    }
     
     public boolean calcularPlanilla(int mes, int anio){
         sueldoService.eliminarSueldo();
-        List<Integer> tiempoAtraso = new ArrayList<Integer>();
-        Empleado[] empleados = restTemplate.getForObject("http://localhost:8005/empleado/listar", Empleado[].class);
+        List<Empleado> empleados = empleadoService.obtenerEmpleados();
         if(empleados == null){return false;}
         for(Empleado e:empleados){
-            // Faltan los atrasos
-            Double horaExtra = restTemplate.getForObject("http://localhost:8005/horaExtra/verificar/{mes}/{anio}/{rut}", Double.class, mes, anio, e.getRut());
-            if(horaExtra == null){horaExtra = 0.0;}
+            Integer[] ta = restTemplate.getForObject("http://localhost:8005/atrasos/verificar/{mes}/{anio}/{rut}", Integer[].class, mes, anio, e.getRut());
+            if(ta == null){return false;}
+            Double horaExtra = restTemplate.getForObject("http://localhost:8003/horaExtra/verificar/{mes}/{anio}/{rut}", Double.class, mes, anio, e.getRut());
+            if(horaExtra == null){return false;}
+            Integer cantInasistencia = restTemplate.getForObject("http://localhost:8002/inasistencia/verificar/{mes}/{anio}/{rut}", Integer.class, mes, anio, e.getRut());
+            List<Integer> tiempoAtraso = juntarAtrasos(ta, cantInasistencia);
             int sueldoMensualFijo = sueldoMensualFijoEmpleado(e);
             Double bonificacionTiempoServicio = bonificacionTiempoServicio(e, sueldoMensualFijo);
             Double pagoHorasExtras = montoHorasExtrasEmpleado(e, horaExtra);
