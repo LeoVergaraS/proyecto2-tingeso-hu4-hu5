@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: sueldo-service
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8081
+  datasource:
+    url: jdbc:mysql://localhost:3306/mueblesstgohu4hu5
+    username: root
+    password: 12345678
+  jpa:
+    hibernate:
+      ddl-auto: update
