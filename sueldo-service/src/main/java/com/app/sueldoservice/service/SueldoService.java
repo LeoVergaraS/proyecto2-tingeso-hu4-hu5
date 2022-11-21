@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.sueldoservice.entity.Sueldo;
+import com.app.sueldoservice.models.Planilla;
 import com.app.sueldoservice.repository.SueldoRepository;
 
 @Service
@@ -16,11 +17,16 @@ public class SueldoService {
 
     public List<Sueldo> obtenerSueldos(){
         return sueldoRepository.findAll();
-    } 
+    }
+    
+    public List<Planilla> obtenerPlanilla(){
+        return sueldoRepository.getPlanillas();
+    }
 
     public Sueldo obtenerSueldo(Long id){
         return sueldoRepository.findById(id).orElse(null);
     }
+    
 
     public Sueldo crearSueldo(Sueldo sueldo){
         Sueldo sueldoCreado = sueldoRepository.save(sueldo);

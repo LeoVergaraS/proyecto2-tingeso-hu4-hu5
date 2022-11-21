@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.sueldoservice.entity.Sueldo;
+import com.app.sueldoservice.models.Planilla;
 import com.app.sueldoservice.service.RRHHservice;
 import com.app.sueldoservice.service.SueldoService;
 
@@ -33,6 +33,15 @@ public class SueldoController {
         return ResponseEntity.ok(sueldos);
     }
 
+    @GetMapping("/planilla")
+    public ResponseEntity<List<Planilla>> getPlanilla(){
+        List<Planilla> sueldos = sueldoService.obtenerPlanilla();
+        if(sueldos.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(sueldos);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Sueldo> getById(@PathVariable("id") Long id){
         Sueldo sueldo = sueldoService.obtenerSueldo(id);
@@ -42,7 +51,7 @@ public class SueldoController {
         return ResponseEntity.ok(sueldo);
     }
 
-    @PostMapping("/calcular/{mes}/{anio}")
+    @GetMapping("/calcular/{mes}/{anio}")
     public ResponseEntity<String> calcularSueldo(@PathVariable("mes") int mes, @PathVariable("anio") int anio){
         Boolean creado = rrhhService.calcularPlanilla(mes, anio);
         if(creado){
