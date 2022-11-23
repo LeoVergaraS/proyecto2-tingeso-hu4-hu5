@@ -20,7 +20,7 @@ public class EmpleadoController {
     @Autowired
     EmpleadoService empleadoService;
 
-    @GetMapping
+    @GetMapping("/mostrar")
     public ResponseEntity<List<Empleado>> getAll(){
         List<Empleado> empleados = empleadoService.obtenerEmpleados();
         if(empleados.isEmpty()){
@@ -38,7 +38,7 @@ public class EmpleadoController {
         return ResponseEntity.ok(empleado);
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<Empleado> create(@RequestBody Empleado empleado){
         Empleado empleadoCreado = empleadoService.crearEmpleado(empleado);
         return ResponseEntity.ok(empleadoCreado);
