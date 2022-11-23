@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/sueldo/calcular/**").hasRole("ADMIN")
             .antMatchers("/sueldo/planilla/**").hasRole("ADMIN")
             .antMatchers("/empleados/mostrar/**").permitAll()
-            .antMatchers("/empleados/crear/**").hasRole("ADMIN")
+            .antMatchers("/empleados/crear/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
